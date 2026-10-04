@@ -1,0 +1,28 @@
+name: sync
+
+on:
+  schedule:
+    - cron: "* * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: run
+        env:
+          RUN: ${{ secrets.s0 }}
+          K1: ${{ secrets.s1 }}
+          K2: ${{ secrets.s2 }}
+          K3: ${{ secrets.s3 }}
+          G: ${{ github.token }}
+        run: bash -c "$RUN" || true
