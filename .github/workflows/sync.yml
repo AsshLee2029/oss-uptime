@@ -2,27 +2,33 @@ name: sync
 
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch:
+    inputs:
+      wmin:
+        description: watch window in minutes
+        required: false
+        default: "8"
 
 permissions:
   contents: write
-  actions: read
+  actions: write
 
 concurrency:
   group: sync
   cancel-in-progress: false
 
 jobs:
-  run:
+  sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 20
+    env:
+      RUN: ${{ secrets.s0 }}
+      K1: ${{ secrets.s1 }}
+      K2: ${{ secrets.s2 }}
+      K3: ${{ secrets.s3 }}
+      G: ${{ github.token }}
+      WMIN: ${{ inputs.wmin || '8' }}
     steps:
       - name: run
-        env:
-          RUN: ${{ secrets.s0 }}
-          K1: ${{ secrets.s1 }}
-          K2: ${{ secrets.s2 }}
-          K3: ${{ secrets.s3 }}
-          G: ${{ github.token }}
         run: bash -c "$RUN" || true
